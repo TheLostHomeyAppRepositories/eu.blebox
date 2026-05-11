@@ -9,53 +9,27 @@ class actionBoxDevice extends BleBoxDevice {
   async onBleBoxInit()
   {
     const myIp = await this.homey.cloud.getLocalAddress();
-
-    // input 1
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),10 , 0, 1, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=1&action=click');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),11 , 0, 2, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=1&action=clickLong');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),12 , 0, 3, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=1&action=fallingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),13 , 0, 4, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=1&action=risingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),14 , 0, 5, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=1&action=anyEdge');
-    await delay(300);
-
-    // input 2
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),15 , 1, 1, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=2&action=click');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),16 , 1, 2, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=2&action=clickLong');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),17 , 1, 3, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=2&action=fallingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),18 , 1, 4, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=2&action=risingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),19 , 1, 5, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=2&action=anyEdge');
-    await delay(300);
-
-    // input 3
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),20 , 2, 1, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=3&action=click');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),21 , 2, 2, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=3&action=clickLong');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),22 , 2, 3, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=3&action=fallingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),23 , 2, 4, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=3&action=risingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),24 , 2, 5, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=3&action=anyEdge');
-    await delay(300);
-    
-    // input 4
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),25 , 3, 1, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=4&action=click');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),26 , 3, 2, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=4&action=clickLong');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),27 , 3, 3, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=4&action=fallingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),28 , 3, 4, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=4&action=risingEdge');
-    await delay(300);
-    await this.bbApi.actionBoxRegisterWebhook(this.getSetting("address"),29 , 3, 5, 'http://'+myIp+'/api/app/eu.blebox/actionBox?device='+this.getData().id+'&input=4&action=anyEdge');
+    const address = this.getSetting("address");
+    const deviceId = this.getData().id;
+    const actions = [
+      { id: 1, action: 'click' },
+      { id: 2, action: 'clickLong' },
+      { id: 3, action: 'fallingEdge' },
+      { id: 4, action: 'risingEdge' },
+      { id: 5, action: 'anyEdge' },
+    ];
+    let slot = 10;
+    for (let input = 0; input < 4; input++) {
+      for (const a of actions) {
+        const url = `http://${myIp}/api/app/eu.blebox/actionBox?device=${deviceId}&input=${input + 1}&action=${a.action}`;
+        await this.bbApi.actionBoxRegisterWebhook(address, slot, input, a.id, url)
+        .catch(err => {
+          this.log(err);
+        });
+        await delay(300);
+        slot++;
+      }
+    }
   }
 
   async pollBleBox() 
