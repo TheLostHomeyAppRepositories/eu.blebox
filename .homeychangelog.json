@@ -316,5 +316,11 @@
   },
   "4.1.4": {
     "en": "thermoBox bugfix"
+  },
+  "4.1.6": {
+    "en": "tempsensorac bugfixes"
+  },
+  "4.1.7": {
+    "en": "Fix CPU overload when many devices poll at once"
   }
 }
