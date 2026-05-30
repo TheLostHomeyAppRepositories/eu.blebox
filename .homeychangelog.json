@@ -322,5 +322,8 @@
   },
   "4.1.7": {
     "en": "Fix CPU overload when many devices poll at once"
+  },
+  "4.1.8": {
+    "en": "Bugfixes"
   }
 }
